@@ -33,7 +33,7 @@
 (s/defn todos :- [model/Produto] [db]
   (db.entidade/datomic-para-entidade
     (d/q '[:find [(pull ?entidade [* {:produto/categoria [*]}]) ...]
-           :where [?entidade :produto/nome]] db)))
+           :where [?entidade :produto/id]] db)))
 
 (def regras
   '[
@@ -125,12 +125,42 @@
             (d/history db) produto-id)
        (sort-by first)))
 
-;O que aprendemos nessa aula:
-;
-;Como usar o history
-;A importância de queries no histórico
-;Fazendo queries nos datoms com condição de inclusão e remoção
+(defn busca-mais-caro [db]
+  (d/q '[:find (max ?preco) .
+         :where [_ :produto/preco ?preco]]
+       db))
 
-; Conclusão:
-; as-of é usado quando quero fazer uma query em um momento do tempo
-; history é usado quando quero ver todos os datoms que já foram alterados na historia
+(defn busca-mais-caros-que [db preco-minimo]
+  (d/q '[:find ?preco
+         :in $ ?minimo
+         :where
+         [_ :produto/preco ?preco]
+         [(>= ?preco ?minimo)]]
+       db preco-minimo))
+
+(defn busca-por-preco [db preco-buscado]
+  (db.entidade/datomic-para-entidade
+    (d/q '[:find [(pull ?produto [*]) ...]
+           :in $ ?preco
+           :where [?produto :produto/preco ?preco]]
+         db preco-buscado)))
+
+(defn busca-por-preco-e-nome-nao-otimizada [db preco nome]
+  (db.entidade/datomic-para-entidade
+    (d/q '[:find [(pull ?produto [*]) ...]
+           :in $ ?preco-minimo ?trecho
+           :where
+           [?produto :produto/nome ?nome]
+           [(.contains ?nome ?trecho)]
+           [?produto :produto/preco ?preco-minimo]]
+         db preco nome)))
+
+(defn busca-por-preco-e-nome [db preco nome]
+  (db.entidade/datomic-para-entidade
+    (d/q '[:find [(pull ?produto [*]) ...]
+           :in $ ?preco-exato ?trecho
+           :where
+           [?produto :produto/preco ?preco-exato]
+           [?produto :produto/nome ?nome]
+           [(.contains ?nome ?trecho)]]
+         db preco nome)))

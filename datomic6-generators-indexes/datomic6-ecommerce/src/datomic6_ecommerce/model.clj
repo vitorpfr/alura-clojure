@@ -19,15 +19,15 @@
    (s/optional-key :produto/preco)         BigDecimal
    (s/optional-key :produto/palavra-chave) [s/Str]
    (s/optional-key :produto/categoria)     Categoria
-   (s/optional-key :produto/estoque)       s/Int
+   (s/optional-key :produto/estoque)       Long
    (s/optional-key :produto/digital)       s/Bool
    (s/optional-key :produto/variacao)      [Variacao]
-   (s/optional-key :produto/visualizacoes) s/Int})
+   (s/optional-key :produto/visualizacoes) Long})
 
 (def Venda
   {:venda/id                          java.util.UUID
    (s/optional-key :venda/produto)    Produto
-   (s/optional-key :venda/quantidade) s/Int
+   (s/optional-key :venda/quantidade) Long
    (s/optional-key :venda/situacao)   s/Str})
 
 ; a desvantagem dessa abordagem é o copy-paste nas chaves

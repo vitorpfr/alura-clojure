@@ -5,5 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [com.datomic/datomic-pro "1.0.6242"]
-                 [prismatic/schema "1.1.12"]]
+                 [prismatic/schema "1.1.12"]
+                 [org.clojure/test.check "1.1.0"]
+                 [prismatic/schema-generators "0.1.3"]]
   :repl-options {:init-ns datomic6-ecommerce.core})
